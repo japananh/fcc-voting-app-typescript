@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Voting App</title>
+		<link
+			id="favicon"
+			rel="icon"
+			href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"
+			type="image/x-icon"
+		/>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/public/style.css" />
+	</head>
+	<body>
+		<header id="header">
+			<div>Welcome <span id="username"></span></div>
+			<div id="navigation">
+				<a href="/">Home</a>
+			</div>
+		</header>
+
+		<form id="form">
+			<input
+				type="text"
+				placeholder="Enter your question"
+				name="question"
+				autofocus
+				autocomplete
+				required
+			/>
+			<textarea
+				placeholder="Enter your options (separated by commas)"
+				name="options"
+				autofocus
+				autocomplete
+				required
+			></textarea>
+			<button type="submit">Create</button>
+		</form>
+
+		<div id="error" class="error"></div>
+
+		<!-- Your web-app is https, so your scripts need to be too -->
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+		<script src="/public/client.js"></script>
+		<script>
+			$(function () {
+				const userId = Cookies.get('userId');
+				$('#form').submit((e) => {
+					e.preventDefault();
+					$.ajax({
+						url: `/api/polls`,
+						type: 'post',
+						data: `${$('#form').serialize()}&user_id=${userId}`,
+						success: (data) => {
+							if (data && !data.error) {
+								document.location.href = `../polls/${data.id}`;
+							} else {
+								$('#error').text(
+									'Server Error. Refresh the page'
+								);
+							}
+						},
+						error: (err) => {
+							console.error(
+								'Create poll error',
+								JSON.stringify(err)
+							);
+							$('#error').text('Server Error. Refresh the page');
+						},
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

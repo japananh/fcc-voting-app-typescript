@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Voting App</title>
+		<link
+			id="favicon"
+			rel="icon"
+			href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"
+			type="image/x-icon"
+		/>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/public/style.css" />
+	</head>
+	<body>
+		<header id="header">
+			<div>Welcome <span id="username"></span></div>
+			<div id="navigation">
+				<a href="/">Home</a>
+			</div>
+		</header>
+
+		<div id="poll">
+			This content does not exist.
+			<a href="/">Back to home page</a>
+		</div>
+
+		<div id="error" class="error"></div>
+
+		<!-- Your web-app is https, so your scripts need to be too -->
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+		<script src="/public/client.js"></script>
+		<script>
+			$(function () {
+				const userId = Cookies.get("userId");
+				const pollId = document.location.href
+					.match(/(?<=\/)\w*\/*$/g)[0]
+					.replace("/", "");
+
+				$.ajax({
+					url: `/api/polls/${pollId}`,
+					type: "get",
+					success: (data) => {
+						if (data && !data.error) {
+							$("#poll").html("");
+
+							const sectionId = `section-${new Date().getTime()}`;
+
+							$("#poll").append(`<section id="${sectionId}"/>`);
+							$(`#${sectionId}`).append(
+								`<h2>${data.question}</h2>`
+							);
+
+							$(`#${sectionId}`).append(
+								`<div>Created by: <span>${data.created_by.username}</span></div>`
+							);
+
+							const voteId = `Vote-${new Date().getTime()}`;
+							$(`#${sectionId}`).append(
+								`<button id="${voteId}">Vote</button>`
+							);
+							$(`#${voteId}`).click((e) => {
+								e.preventDefault();
+								window.location.href = "../";
+								const offset = $(
+									`label:contains("${data.question}")`
+								).offset();
+								$("html, body").animate({
+									scrollTop: offset.top - 70,
+									speed: 800,
+								});
+							});
+
+							const deleteId = `delete-${new Date().getTime()}`;
+							$(`#${sectionId}`).append(
+								`<button id="${deleteId}">Delete</button>`
+							);
+							$(`#${deleteId}`).click(() => {
+								$.ajax({
+									url: `/api/polls/${pollId}`,
+									type: "delete",
+									success: (data) => {
+										if (data === "success") {
+											alert("Delete successfully");
+											window.location.href = `../polls/${pollId}`;
+										} else {
+											alert("Delete Error. Try again");
+										}
+									},
+									error: (err) => {
+										console.error(
+											"Delete poll error",
+											JSON.stringify(err)
+										);
+										$("#error").text(
+											"Delete Error. Refresh the page"
+										);
+									},
+								});
+							});
+
+							const optionsId = `options-${new Date().getTime()}`;
+
+							$(`#${sectionId}`).append(
+								`<div id="${optionsId}" />`
+							);
+
+							data.options.forEach((option) => {
+								$(`#${optionsId}`).append(
+									`<div><span>${option.name}</span>: <span>${option.votes.length}</span></div>`
+								);
+							});
+						}
+					},
+					error: (err) => {
+						console.error("Get polls error", JSON.stringify(err));
+						$("#error").text("Server Error. Refresh the page");
+					},
+				});
+			});
+		</script>
+	</body>
+</html>

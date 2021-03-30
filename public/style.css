@@ -1,0 +1,15 @@
+#header {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.error {
+	color: red;
+}
+
+form {
+	margin: 30px 10px;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Voting App</title>
+		<link
+			id="favicon"
+			rel="icon"
+			href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"
+			type="image/x-icon"
+		/>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/public/style.css" />
+	</head>
+	<body>
+		<header id="header">
+			<div>Welcome, <span id="username"></span></div>
+			<div>
+				<a href="/">Home</a>
+				<a href="/login">Log in</a>
+			</div>
+		</header>
+
+		<form id="signup">
+			<input
+				type="text"
+				placeholder="Enter your username"
+				name="username"
+				autofocus
+				autocomplete
+				required
+			/>
+			<input
+				type="password"
+				placeholder="Enter your password"
+				name="password"
+				autocomplete
+				required
+			/>
+			<button type="submit">Submit</button>
+		</form>
+
+		<div>
+			Already have an account?
+			<a href="/login">Log in</a>
+		</div>
+
+		<div id="error" class="error"></div>
+
+		<!-- Your web-app is https, so your scripts need to be too -->
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+		<script>
+			$(function () {
+				$("#signup").submit((e) => {
+					$.ajax({
+						url: `/api/auth/signup`,
+						type: "post",
+						data: $("#signup").serialize(),
+						success: (data) => {
+							if (data.id && data.username) {
+								Cookies.set("userId", data.id);
+								Cookies.set("username", data.username);
+								document.location.href = "../";
+							} else {
+								$("#error").text(
+									(err.responseJSON &&
+										err.responseJSON.message) ||
+										"Signup error. Try again"
+								);
+							}
+						},
+						error: (err) => {
+							console.error("Signup error", err);
+							$("#error").text(
+								(err.responseJSON &&
+									err.responseJSON.message) ||
+									"Signup error. Try again"
+							);
+						},
+					});
+					e.preventDefault();
+				});
+			});
+		</script>
+	</body>
+</html>

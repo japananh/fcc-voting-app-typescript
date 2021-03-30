@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Voting App</title>
+		<link
+			id="favicon"
+			rel="icon"
+			href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"
+			type="image/x-icon"
+		/>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/public/style.css" />
+	</head>
+	<body>
+		<header id="header">
+			<div>Welcome<span id="username"></span></div>
+			<div id="navigation">
+				<a href="/">Home</a>
+			</div>
+		</header>
+
+		<div id="polls">There is no poll.</div>
+
+		<!-- Your web-app is https, so your scripts need to be too -->
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+		<script src="/public/client.js"></script>
+		<script>
+			$(function () {
+				$.ajax({
+					url: `/api/polls`,
+					type: "get",
+					success: (data) => {
+						if (data.length) {
+							$("#polls").html("");
+
+							data.forEach((element, index) => {
+								const sectionId = `section-${new Date().getTime()}`;
+								const selectId = `options-${new Date().getTime()}`;
+
+								$("#polls").append(`<form id="${sectionId}"/>`);
+								const sectionEl = $(`#${sectionId}`);
+
+								$(sectionEl).append(
+									`<label for="${selectId}" >${index + 1}. ${
+										element.question
+									}</h2>`
+								);
+
+								$(sectionEl).append(
+									`<div>Created by: ${element.created_by.username}</div>`
+								);
+
+								$(sectionEl).append(
+									`<a href="/polls/${element.id}">Detail</a>`
+								);
+
+								$(sectionEl).append(
+									`<br /><select id="${selectId}" autofocus />`
+								);
+								const selectEl = $(`#${selectId}`);
+
+								element.options.forEach((option) => {
+									$(selectEl).append(
+										`<option value="${option.name}">${option.name}</option>`
+									);
+								});
+
+								const defaultValue = "Add option";
+								let option = "";
+
+								$(selectEl).append(
+									`<option value="${defaultValue}">${defaultValue}</option>`
+								);
+
+								const inputId = `input-${new Date().getTime()}`;
+
+								$(sectionEl).append(
+									`<br />
+									<input 
+										id="${inputId}"
+										type="string"
+										placeholder="Add new"
+										autocomplete
+										autofocus
+										disabled
+										required
+									/>`
+								);
+								const inputEl = $(`#${inputId}`);
+
+								$(selectEl).change((e) => {
+									const inputValue = $(selectEl)
+										.find(":selected")
+										.text();
+									if (inputValue === defaultValue) {
+										inputEl.removeAttr("disabled");
+									}
+								});
+
+								$(sectionEl).append(
+									`<br /><button type="submit">Vote</buton>`
+								);
+
+								$(sectionEl).submit((e) => {
+									e.preventDefault();
+
+									const inputValue = $(selectEl)
+										.find(":selected")
+										.text();
+
+									option =
+										inputValue === defaultValue
+											? inputEl.val()
+											: $(selectEl)
+													.find(":selected")
+													.text();
+
+									if (
+										!option ||
+										!element.created_by ||
+										!element.created_by.id
+									) {
+										return alert(
+											"Missing required fields."
+										);
+									}
+
+									$.ajax({
+										url: `/api/polls/${element.id}`,
+										type: "put",
+										data: `user_id=${element.created_by.id}&option=${option}`,
+										success: (data) => {
+											alert("Update sucessfully");
+										},
+										error: (err) => {
+											console.error(
+												"Update poll error",
+												JSON.stringify(err)
+											);
+											alert(
+												"Server Error. Refresh the page"
+											);
+										},
+									});
+								});
+							});
+						}
+					},
+					error: (err) => {
+						console.error("Get polls error", JSON.stringify(err));
+						alert("Server Error. Refresh the page");
+					},
+				});
+			});
+		</script>
+	</body>
+</html>
