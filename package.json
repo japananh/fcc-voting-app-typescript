@@ -4,7 +4,7 @@
 	"description": "An API boilerplate written by typescript-express-mongoose",
 	"main": "server.ts",
 	"scripts": {
-		"dev": "ts-node-dev --respawn --pretty --transpile-only server.ts",
+		"start": "ts-node-dev --respawn --pretty --transpile-only server.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
 	},
