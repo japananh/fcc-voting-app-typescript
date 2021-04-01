@@ -92,11 +92,9 @@ mongoose.connect(config.db.uri, config.db.options).then(() => {
 			setTimeout(function () {
 				try {
 					runner.run();
-					console.log("completed test");
+					console.log("Completed test");
 				} catch (e) {
-					const error = e;
-					console.log("Tests are not valid:");
-					console.log(error);
+					console.log("Tests are not valid:", e);
 				}
 			}, 1500);
 		}

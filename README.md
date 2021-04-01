@@ -1,5 +1,25 @@
 # Build a Voting App
 
+## Scripts:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Install all dependecies
+yarn
+
+# Add the .env file as the .env.sample, then run the app
+yarn dev
+
+# Set NODE_ENV=test to run test
+yarn dev
+
+# Fix eslint error
+yarn lint
+yarn lint:fix
+```
+
 ## User stories
 
 User Story: As an authenticated user, you can keep my polls and come back later to access them.
