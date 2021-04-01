@@ -1,7 +1,7 @@
-import * as dotenv from 'dotenv'
-dotenv.config();
+/* eslint-disable no-console */
+import * as dotenv from "dotenv";
 import express from "express";
-import bodyParser from "body-parser"
+import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import mongoose from "mongoose";
@@ -13,9 +13,11 @@ import runner from "./test-runner";
 import { errorConverter, errorHandler } from "./middlewares/error";
 import config from "./config/config";
 
+dotenv.config();
+
 const app = express();
 
-app.use(cors({ origin: "*" })); //For FCC testing purposes only
+app.use(cors({ origin: "*" })); // For FCC testing purposes only
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -46,32 +48,32 @@ app.use(
 	})
 );
 
-app.use("/public", express.static(process.cwd() + "/public"));
+app.use("/public", express.static(`${process.cwd()}/public`));
 
 app.route("/").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/index.html");
+	res.sendFile(`${process.cwd()}/views/index.html`);
 });
 // TODO: Add midleware to all routes below
 app.route("/login").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/login.html");
+	res.sendFile(`${process.cwd()}/views/login.html`);
 });
 app.route("/signup").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/signup.html");
+	res.sendFile(`${process.cwd()}/views/signup.html`);
 });
 app.route("/new-poll").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/new-poll.html");
+	res.sendFile(`${process.cwd()}/views/new-poll.html`);
 });
 app.route("/polls").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/my-polls.html");
+	res.sendFile(`${process.cwd()}/views/my-polls.html`);
 });
 app.route("/polls/:id").get(function (_req, res) {
-	res.sendFile(process.cwd() + "/views/poll.html");
+	res.sendFile(`${process.cwd()}/views/poll.html`);
 });
 
-//For FCC testing purposes
+// For FCC testing purposes
 fccTestingRoutes(app);
 
-//Routing for API
+// Routing for API
 apiRoutes(app);
 
 app.use(function (_req, res) {
@@ -82,16 +84,17 @@ mongoose.connect(config.db.uri, config.db.options).then(() => {
 	console.log("Connected to mongodb");
 
 	const port: number = parseInt(process.env.PORT as string, 10) || 3000;
-	//Start our server and tests!
+	// Start our server and tests!
 	app.listen(port, function () {
-		console.log("Listening on port " + process.env.PORT);
+		console.log(`Listening on port ${process.env.PORT}`);
 		if (process.env.NODE_ENV === "test") {
 			console.log("Running Tests...");
 			setTimeout(function () {
 				try {
 					runner.run();
+					console.log("completed test");
 				} catch (e) {
-					var error = e;
+					const error = e;
 					console.log("Tests are not valid:");
 					console.log(error);
 				}
@@ -106,4 +109,4 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-export default app; //for testing
+export default app; // for testing

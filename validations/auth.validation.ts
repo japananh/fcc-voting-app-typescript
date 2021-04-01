@@ -1,5 +1,5 @@
 import Joi from "@hapi/joi";
-import { password } from "./custom.validation";
+import password from "./custom.validation";
 
 const signup = {
 	body: Joi.object().keys({
@@ -15,7 +15,4 @@ const login = {
 	}),
 };
 
-export {
-	signup,
-	login,
-};
+export { signup, login };

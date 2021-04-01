@@ -1,4 +1,5 @@
-const password = (value: string, helpers: any) => {
+/* eslint-disable */
+const password = (value: string, helpers: any): string => {
 	if (value.length < 4) {
 		return helpers.message("password must be at least 4 characters");
 	}
@@ -10,6 +11,4 @@ const password = (value: string, helpers: any) => {
 	return value;
 };
 
-export {
-	password,
-};
+export default password;

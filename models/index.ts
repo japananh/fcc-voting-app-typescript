@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { toJSON } from "./plugins";
+import toJSON from "./plugins";
 
-const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
+const { Schema } = mongoose;
+const { ObjectId } = Schema.Types;
 
 const userSchema = new Schema(
 	{

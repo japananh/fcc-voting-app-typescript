@@ -1,4 +1,4 @@
-import { Request, Response} from 'express'
+import { Request, Response } from "express";
 import { Poll } from "../models";
 import ApiError from "../utils/ApiError";
 import catchAsync from "../utils/catchAsync";
@@ -26,10 +26,11 @@ export const getPolls = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getPoll = catchAsync(async (req: Request, res: Response) => {
-	const id = req.params.id;
+	const { id } = req.params;
 	const poll = await Poll.findOne({ _id: id }).populate([
 		{
 			path: "created_by",
+			/* eslint-disable @typescript-eslint/no-explicit-any */
 			transform: (doc: any) =>
 				doc == null ? null : { username: doc.username },
 		},
@@ -39,7 +40,7 @@ export const getPoll = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const updatePoll = catchAsync(async (req: Request, res: Response) => {
-	const id = req.params.id;
+	const { id } = req.params;
 	const { user_id: userId, option } = req.body;
 
 	const poll = await Poll.findOne({
@@ -55,6 +56,7 @@ export const updatePoll = catchAsync(async (req: Request, res: Response) => {
 			},
 			{
 				$addToSet: {
+					/* eslint-disable */
 					"options.$.votes": [userId],
 				},
 			}
@@ -79,7 +81,7 @@ export const updatePoll = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const deletePoll = catchAsync(async (req: Request, res: Response) => {
-	const id = req.params.id;
+	const { id } = req.params;
 	const deletedPoll = await Poll.findByIdAndDelete(id);
 	if (!deletedPoll) throw new ApiError(404, "Poll not found");
 	res.json("success");
@@ -87,7 +89,7 @@ export const deletePoll = catchAsync(async (req: Request, res: Response) => {
 
 export const createPoll = catchAsync(async (req: Request, res: Response) => {
 	const { user_id: userId, question, options: optionString } = req.body;
-	
+
 	const options = optionString
 		.split(",")
 		.map((option: string) => ({ name: option, votes: [] }));
@@ -97,6 +99,8 @@ export const createPoll = catchAsync(async (req: Request, res: Response) => {
 		question,
 		options,
 	});
+
+	if (!createdPoll) throw new ApiError(500, "Server error");
 
 	res.json(createdPoll);
 });

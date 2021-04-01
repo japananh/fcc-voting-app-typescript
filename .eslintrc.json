@@ -4,16 +4,37 @@
         "browser": true,
         "es6": true
     },
-    "extends": ["airbnb-base", "plugin:prettier/recommended"],
-    "plugins": ["prettier"],
+    "extends": [
+        "airbnb-base", 
+        "plugin:prettier/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript"
+    ],
+    "plugins": ["@typescript-eslint", "prettier"],
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "parser": "@typescript-eslint/parser",
     "rules": {
         "no-console": "error",
         "func-names": "off",
         "no-underscore-dangle": "off",
-        "consistent-return": "off"
+        "consistent-return": "off",
+        // airbnb enable `import/extensions` rule but not for .ts and .tsx file
+        // Reference: https://github.com/airbnb/javascript/blob/master/packages/eslint-config-airbnb-base/rules/imports.js#L139
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+              "js": "never",
+              "jsx": "never",
+              "ts": "never",
+              "tsx": "never"
+            }
+        ],
+        "@typescript-eslint/no-empty-function": 0,
+        "no-plusplus": 0
     }
 }
   

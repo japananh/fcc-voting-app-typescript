@@ -1,4 +1,4 @@
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import { User } from "../models";
 import ApiError from "../utils/ApiError";
 import catchAsync from "../utils/catchAsync";
@@ -17,8 +17,12 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 		throw new ApiError(400, "Incorrect username or password");
 	}
 
-	delete user.password;
-	res.json(user);
+	res.json({
+		id: user.id,
+		created_at: user.created_at,
+		username: user.username,
+		updated_at: user.updated_at,
+	});
 });
 
 export const signup = catchAsync(async (req: Request, res: Response) => {
@@ -37,6 +41,10 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
 	const user = await User.create({ username, password: hashPassword });
 	if (!user) throw new ApiError(500, "Server error");
 
-	delete user.password;
-	res.json(user);
+	res.json({
+		id: user.id,
+		created_at: user.created_at,
+		username: user.username,
+		updated_at: user.updated_at,
+	});
 });

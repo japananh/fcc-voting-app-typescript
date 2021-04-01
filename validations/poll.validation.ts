@@ -36,10 +36,4 @@ const createPoll = {
 	}),
 };
 
-export {
-	getUserPolls,
-	getPoll,
-	updatePoll,
-	deletePoll,
-	createPoll,
-};
+export { getUserPolls, getPoll, updatePoll, deletePoll, createPoll };

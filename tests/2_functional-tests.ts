@@ -1,10 +1,30 @@
-const chaiHttp = require("chai-http");
-const chai = require("chai");
-const assert = chai.assert;
-const ObjectID = require("mongoose").Types.ObjectId;
+import chaiHttp from "chai-http";
+import chai from "chai";
+import mongoose from "mongoose";
 
-const server = require("../server");
-const { Poll, User } = require("../models");
+import server from "../server";
+import { Poll, User } from "../models";
+
+const { assert } = chai;
+const ObjectID = mongoose.Types.ObjectId;
+
+interface poll {
+	/* eslint-disable camelcase */
+	created_by: {
+		id: string;
+		username: string;
+	};
+	question: string;
+	/* eslint-disable camelcase */
+	updated_at: string;
+	id: string;
+	options: {
+		[index: number]: {
+			name: string;
+			votes: string[];
+		};
+	};
+}
 
 chai.use(chaiHttp);
 
@@ -35,12 +55,10 @@ suite("Functional Tests", function () {
 						["username", "created_at", "updated_at", "id"],
 						"response should contain all keys"
 					);
-					assert.exists(
+					assert.notExists(
 						res.body.password,
-						false,
 						"response should not contains password field"
 					);
-
 					userId = res.body.id;
 
 					done();
@@ -82,9 +100,8 @@ suite("Functional Tests", function () {
 						["username", "created_at", "updated_at", "id"],
 						"response should contain all keys"
 					);
-					assert.exists(
+					assert.notExists(
 						res.body.password,
-						false,
 						"response should not contains password field"
 					);
 
@@ -142,6 +159,7 @@ suite("Functional Tests", function () {
 			chai.request(server)
 				.post(`/api/polls`)
 				.send({
+					/* eslint-disable camelcase */
 					user_id: userId,
 					question,
 					options: options.join(","),
@@ -174,6 +192,7 @@ suite("Functional Tests", function () {
 			chai.request(server)
 				.post(`/api/polls`)
 				.send({
+					/* eslint-disable camelcase */
 					user_id: userId,
 					question,
 				})
@@ -193,7 +212,7 @@ suite("Functional Tests", function () {
 					assert.isArray(res.body, "response should be an array");
 
 					if (res.body.length) {
-						res.body.forEach((item) => {
+						res.body.forEach((item: poll) => {
 							assert.containsAllKeys(item, [
 								"created_by",
 								"question",
@@ -218,7 +237,7 @@ suite("Functional Tests", function () {
 					assert.isArray(res.body, "response should be an array");
 
 					if (res.body.length) {
-						res.body.forEach((item) => {
+						res.body.forEach((item: poll) => {
 							assert.containsAllKeys(item, [
 								"created_by",
 								"question",
@@ -228,11 +247,13 @@ suite("Functional Tests", function () {
 								"options",
 							]);
 							assert.containsAllKeys(
+								/* eslint-disable camelcase */
 								item.created_by,
 								["id", "username"],
 								"created_by should contain id and username keys"
 							);
 							assert.equal(
+								/* eslint-disable camelcase */
 								item.created_by.id,
 								userId,
 								"all polls should have the same user_id"

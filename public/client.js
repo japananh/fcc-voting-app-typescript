@@ -1,3 +1,4 @@
+/* eslint-disable */
 $(document).ready(() => {
 	const username = Cookies.get("username");
 	const userId = Cookies.get("userId");
@@ -15,7 +16,7 @@ $(document).ready(() => {
 		$("#navigation").append('<a href="/signup">Sign up</a>');
 	}
 
-	$("#logout").click((e) => {
+	$("#logout").click((_e) => {
 		Cookies.remove("username");
 		Cookies.remove("userId");
 	});
