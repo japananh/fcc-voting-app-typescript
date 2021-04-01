@@ -19,15 +19,16 @@ export const errorConverter = (
 		error = new ApiError(statusCode, message, false, err.stack);
 	}
 
-	// Bug: error should be instance of ApiError, but this line logs false
-	// console.log(error instanceof ApiError, "-------message");
 	next(error);
 };
 
-// Bug: This middleware never be called
-export const errorHandler = (err: any, _req: Request, res: Response): void => {
-	// This line never be called too
-	// console.log("error handler------", err);
+export const errorHandler = (
+	err: any,
+	_req: Request,
+	res: Response,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	_next: NextFunction
+): void => {
 	let { statusCode, message } = err;
 	if (config.env === "production" && !err.isOperational) {
 		statusCode = httpStatus.INTERNAL_SERVER_ERROR;
